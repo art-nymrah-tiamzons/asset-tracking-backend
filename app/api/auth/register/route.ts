@@ -4,10 +4,20 @@ import mongoose from "mongoose";
 import { connectDB } from "../../../../lib/mongodb";
 
 const UserSchema = new mongoose.Schema({
-  fullName: String,
-  email: { type: String, unique: true },
-  password: String,
-  role: { type: String, default: "user" }
+  fullName: {
+    type: String
+  },
+  email: {
+    type: String,
+    unique: true
+  },
+  password: {
+    type: String
+  },
+  role: {
+    type: String,
+    default: "user"
+  }
 });
 
 const User =
@@ -40,7 +50,10 @@ export async function POST(req: Request) {
 
     if (existingUser) {
       return NextResponse.json(
-        { message: "Email already registered" },
+        {
+          message: "Email already registered"
+        },
+        
         {
           status: 409,
           headers: {
@@ -60,7 +73,10 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json(
-      { message: "Account created successfully" },
+      {
+        message: "Account created successfully"
+      },
+
       {
         status: 201,
         headers: {
@@ -68,9 +84,12 @@ export async function POST(req: Request) {
         }
       }
     );
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
-      { message: "Server error" },
+      {
+        message: "Server error"
+      },
+      
       {
         status: 500,
         headers: {

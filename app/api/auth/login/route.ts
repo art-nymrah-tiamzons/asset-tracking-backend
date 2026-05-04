@@ -4,10 +4,18 @@ import mongoose from "mongoose";
 import { connectDB } from "../../../../lib/mongodb";
 
 const UserSchema = new mongoose.Schema({
-  fullName: String,
-  email: String,
-  password: String,
-  role: String
+  fullName: {
+    type: String
+  },
+  email:{
+    type: String
+  },
+  password: {
+    type: String
+  },
+  role: {
+    type: String
+  }
 });
 
 const User =
@@ -34,33 +42,41 @@ export async function POST(req: Request) {
 
     const { email, password } = await req.json();
 
-        const user = await mongoose.model("User").findOne({ email });
+    const user = await mongoose.model("User").findOne({
+      email
+    }) as any;
 
-        if (!user) {
-        return NextResponse.json(
-            { message: "Invalid Email" },
-            {
-            status: 401,
-            headers: {
-                "Access-Control-Allow-Origin": "*"
-            }
-            }
-        );
+    if (!user) {
+      return NextResponse.json(
+        {
+          message: "Invalid Email"
+        },
+
+        {
+          status: 401,
+          headers: {
+            "Access-Control-Allow-Origin": "*"
+          }
         }
+      );
+    }
 
-        const match = await bcrypt.compare(password, user.password);
+    const match = await bcrypt.compare(password, user.password);
 
-        if (!match) {
-        return NextResponse.json(
-            { message: "Invalid Password" },
-            {
-            status: 401,
-            headers: {
-                "Access-Control-Allow-Origin": "*"
-            }
-            }
-        );
-}
+    if (!match) {
+      return NextResponse.json(
+        {
+          message: "Invalid Password"
+        },
+
+        {
+          status: 401,
+          headers: {
+            "Access-Control-Allow-Origin": "*"
+          }
+        }
+      );
+    }
 
     return NextResponse.json(
       {
@@ -71,6 +87,7 @@ export async function POST(req: Request) {
           role: user.role
         }
       },
+      
       {
         status: 200,
         headers: {
@@ -78,9 +95,12 @@ export async function POST(req: Request) {
         }
       }
     );
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
-      { message: "Server error" },
+      {
+        message: "Server error"
+      },
+
       {
         status: 500,
         headers: {
